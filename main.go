@@ -65,7 +65,7 @@ func (l *Lexer) NextToken() Token {
 		l.pos++
 		return l.NextToken()
 	}
-	if isLetter(ch) {
+	if isIdentifierChar(ch) {
 		value := l.readIdentifier()
 		return Token{Type: Identifier, Value: value}
 	}
@@ -84,13 +84,13 @@ func (l *Lexer) readString() string {
 	return result
 }
 
-func isLetter(ch byte) bool {
-	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
+func isIdentifierChar(ch byte) bool {
+	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')
 }
 
 func (l *Lexer) readIdentifier() string {
 	start := l.pos
-	for l.pos < len(l.input) && isLetter(l.input[l.pos]) {
+	for l.pos < len(l.input) && isIdentifierChar(l.input[l.pos]) {
 		l.pos++
 	}
 	return l.input[start:l.pos]
@@ -279,7 +279,7 @@ func main() {
 	// 	}
 	// }
 
-	input = `<Button color="red"><span>Click me</span></Button>`
+	input = `<div><h1>Hello</h1><Button color="red">Click me</Button></div>`
 	lexer = NewLexer(input)
 	parser := NewParser(lexer)
 	element := parser.parseElement()
