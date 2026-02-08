@@ -1,31 +1,34 @@
 package main
 
+import "strings"
+
 func generate(element JSXElement) string {
-	result := "React.createElement("
-	result += element.Tag
+	var result strings.Builder
+	result.WriteString("React.createElement(")
+	result.WriteString(element.Tag)
 
 	if len(element.Props) > 0 {
-		result += ", { "
+		result.WriteString(", { ")
 		for i, prop := range element.Props {
-			result += prop.Name + `: "` + prop.Value + `"`
+			result.WriteString(prop.Name + `: "` + prop.Value + `"`)
 			if i < len(element.Props)-1 {
-				result += ", "
+				result.WriteString(", ")
 			}
 		}
-		result += " }"
+		result.WriteString(" }")
 	} else {
-		result += ", null"
+		result.WriteString(", null")
 	}
 
 	for _, child := range element.Children {
 		switch c := child.(type) {
 		case TextNode:
-			result += `, "` + c.Value + `"`
+			result.WriteString(`, "` + c.Value + `"`)
 		case JSXElement:
-			result += ", " + generate(c)
+			result.WriteString(", " + generate(c))
 		}
 	}
 
-	result += ")"
-	return result
+	result.WriteString(")")
+	return result.String()
 }
