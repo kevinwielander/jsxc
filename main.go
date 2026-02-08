@@ -186,7 +186,10 @@ func (p *Parser) parseChildren() []Child {
 			break
 		}
 		if p.current.Type == OpenAngle {
-			break
+			if p.lexer.input[p.lexer.pos] == '/' {
+				break
+			}
+			children = append(children, p.parseElement())
 		}
 		if p.current.Type == Text {
 			children = append(children, TextNode{Value: p.current.Value})
@@ -219,6 +222,8 @@ func generate(element JSXElement) string {
 		switch c := child.(type) {
 		case TextNode:
 			result += `, "` + c.Value + `"`
+		case JSXElement:
+			result += ", " + generate(c)
 		}
 	}
 
@@ -274,7 +279,7 @@ func main() {
 	// 	}
 	// }
 
-	input = `<Button color="red">Click me</Button>`
+	input = `<Button color="red"><span>Click me</span></Button>`
 	lexer = NewLexer(input)
 	parser := NewParser(lexer)
 	element := parser.parseElement()
