@@ -5,7 +5,11 @@ import "strings"
 func generate(element JSXElement) string {
 	var result strings.Builder
 	result.WriteString("React.createElement(")
-	result.WriteString(element.Tag)
+	if isHTMLTag(element.Tag) {
+		result.WriteString(`"` + element.Tag + `"`)
+	} else {
+		result.WriteString(element.Tag)
+	}
 
 	if len(element.Props) > 0 {
 		result.WriteString(", { ")
@@ -31,4 +35,8 @@ func generate(element JSXElement) string {
 
 	result.WriteString(")")
 	return result.String()
+}
+
+func isHTMLTag(tag string) bool {
+	return tag[0] >= 'a' && tag[0] <= 'z'
 }
