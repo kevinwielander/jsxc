@@ -3,40 +3,26 @@ package main
 import "strings"
 
 func generate(element JSXElement) string {
-	var result strings.Builder
-	result.WriteString("React.createElement(")
-	if isHTMLTag(element.Tag) {
-		result.WriteString(`"` + element.Tag + `"`)
-	} else {
-		result.WriteString(element.Tag)
-	}
-
-	if len(element.Props) > 0 {
-		result.WriteString(", { ")
-		for i, prop := range element.Props {
-			result.WriteString(prop.Name + `: "` + prop.Value + `"`)
-			if i < len(element.Props)-1 {
-				result.WriteString(", ")
-			}
-		}
-		result.WriteString(" }")
-	} else {
-		result.WriteString(", null")
-	}
-
-	for _, child := range element.Children {
-		switch c := child.(type) {
-		case TextNode:
-			result.WriteString(`, "` + c.Value + `"`)
-		case JSXElement:
-			result.WriteString(", " + generate(c))
-		}
-	}
-
-	result.WriteString(")")
-	return result.String()
+	// TODO (Stage 4): Walk the AST and emit React.createElement(...) calls.
+	//
+	// Structure:
+	//   React.createElement(tag, props, ...children)
+	//
+	// Rules:
+	//   - Lowercase tag  → pass as string:     "div"
+	//   - Uppercase tag  → pass as identifier:  MyComponent
+	//   - No props       → pass null
+	//   - Props          → pass as JS object:   { name: "value" }
+	//   - Children       → additional args, use a type switch on Child
+	//
+	// Hint: use strings.Builder for efficient string building.
+	// Hint: call generate(child) recursively for JSXElement children.
+	_ = strings.Builder{} // remove this line when you start implementing
+	panic("not implemented")
 }
 
+// isHTMLTag returns true if the tag starts with a lowercase letter.
+// Lowercase = HTML element (pass as string), Uppercase = React component (pass as identifier).
 func isHTMLTag(tag string) bool {
 	return tag[0] >= 'a' && tag[0] <= 'z'
 }
